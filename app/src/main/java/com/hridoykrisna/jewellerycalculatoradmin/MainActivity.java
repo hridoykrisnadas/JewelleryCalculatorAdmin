@@ -1,24 +1,188 @@
 package com.hridoykrisna.jewellerycalculatoradmin;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Button getOtpBtn, verifyBtn;
+    private EditText phoneNumberEt, otpET;
+
+    // variable for FirebaseAuth class
+    private FirebaseAuth mAuth;
+
+    // string for storing our verification ID
+    private String verificationId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        //        Check Internet Connection Start
+        ConnectivityManager conMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        @SuppressLint("MissingPermission")
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if (netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()) {
+            this.startActivity(new Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY));
+            Toast.makeText(this, "No Internet connection!", Toast.LENGTH_SHORT).show();
+        }
+
+//
+
+        mAuth = FirebaseAuth.getInstance();
+
+        otpET = findViewById(R.id.otpETId);
+        getOtpBtn = findViewById(R.id.getOtpBtnId);
+        verifyBtn = findViewById(R.id.verifyBtnId);
+
+        getOtpBtn.setOnClickListener(v -> {
+            String phone = "+8801601229060";
+            otpET.setVisibility(View.VISIBLE);
+            verifyBtn.setVisibility(View.VISIBLE);
+            sendVerificationCode(phone);
         });
+        verifyBtn.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(otpET.getText().toString())) {
+                // if the OTP text field is empty display
+                // a message to user to enter OTP
+                Toast.makeText(MainActivity.this, "Please enter OTP", Toast.LENGTH_SHORT).show();
+            } else {
+                // if OTP field is not empty calling
+                // method to verify the OTP.
+                verifyCode(otpET.getText().toString());
+            }
+        });
+
     }
+
+    private void sendVerificationCode(String number) {
+        // this method is used for getting
+        // OTP on user phone number.
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(mAuth)
+                        .setPhoneNumber(number)            // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(this)                 // Activity (for callback binding)
+                        .setCallbacks(mCallBack)           // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks
+
+            // initializing our callbacks for on
+            // verification callback method.
+            mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+        // below method is used when
+        // OTP is sent from Firebase
+        @Override
+        public void onCodeSent(String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            super.onCodeSent(s, forceResendingToken);
+            // when we receive the OTP it
+            // contains a unique id which
+            // we are storing in our string
+            // which we have already created.
+            verificationId = s;
+        }
+
+        // this method is called when user
+        // receive OTP from Firebase.
+        @Override
+        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+            // below line is used for getting OTP code
+            // which is sent in phone auth credentials.
+            final String code = phoneAuthCredential.getSmsCode();
+
+            // checking if the code
+            // is null or not.
+            if (code != null) {
+                // if the code is not null then
+                // we are setting that code to
+                // our OTP edittext field.
+                otpET.setText(code);
+
+                // after setting this code
+                // to OTP edittext field we
+                // are calling our verifycode method.
+                verifyCode(code);
+            }
+        }
+
+        // this method is called when firebase doesn't
+        // sends our OTP code due to any error or issue.
+        @Override
+        public void onVerificationFailed(FirebaseException e) {
+            // displaying error message with firebase exception.
+            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            System.out.println("Error 1: " + Objects.requireNonNull(e.getMessage()));
+
+            otpET.setVisibility(View.GONE);
+            verifyBtn.setVisibility(View.GONE);
+        }
+    };
+
+    private void verifyCode(String code) {
+        // below line is used for getting
+        // credentials from our verification id and code.
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+
+        // after getting credential we are
+        // calling sign in method.
+        signInWithCredential(credential);
+    }
+
+    private void signInWithCredential(PhoneAuthCredential credential) {
+        // inside this method we are checking if
+        // the code entered is correct or not.
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // if the code is correct and the task is successful
+                            // we are sending our user to new activity.
+                            Intent i = new Intent(MainActivity.this, HomeActivity.class);
+                            startActivity(i);
+                            finish();
+                        } else {
+                            // if the code is not correct then we are
+                            // displaying an error message to the user.
+                            Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                            System.out.println("Error 2: " + Objects.requireNonNull(task.getException()).getMessage());
+                            otpET.setVisibility(View.GONE);
+                            verifyBtn.setVisibility(View.GONE);
+                        }
+                    }
+                });
+    }
+
 }

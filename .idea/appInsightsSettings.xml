@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.hridoykrisna.jewellerycalculatoradmin" />
+                  <option name="mobileSdkAppId" value="1:776166828650:android:5765d97109da2d08a63813" />
+                  <option name="projectId" value="jewellery-calculator-27c66" />
+                  <option name="projectNumber" value="776166828650" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

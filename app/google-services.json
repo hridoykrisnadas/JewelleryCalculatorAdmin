@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "776166828650",
+    "firebase_url": "https://jewellery-calculator-27c66-default-rtdb.firebaseio.com",
+    "project_id": "jewellery-calculator-27c66",
+    "storage_bucket": "jewellery-calculator-27c66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776166828650:android:5765d97109da2d08a63813",
+        "android_client_info": {
+          "package_name": "com.hridoykrisna.jewellerycalculatoradmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb8moMJUQ_91I9H8idaf1lWhehNii1PHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776166828650:android:d279d21f725c6733a63813",
+        "android_client_info": {
+          "package_name": "com.moontechit.jwelerscalculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb8moMJUQ_91I9H8idaf1lWhehNii1PHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-4695371209263137~4405080372"
+    }
+  ],
+  "configuration_version": "1"
+}
