@@ -57,7 +57,6 @@ public class HomeActivity extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, runningDateListener, year, month, dayOfMonth);
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
 
@@ -72,6 +71,7 @@ public class HomeActivity extends AppCompatActivity {
             calendar.set(year, month, dayOfMonth);
             runningDate = simpleDateFormat.format(calendar.getTime());
             runningDateTv.setText(runningDate);
+
 
 
         }
