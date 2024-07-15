@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     id 'com.google.gms.google-services'
 
+
 }
 
 android {
@@ -28,6 +29,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildscript {
+        dependencies {
+            classpath libs.google.services
+        }
+    }
+
 }
 
 dependencies {
@@ -44,5 +51,11 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation libs.firebase.analytics
     implementation libs.firebase.database
+
+//    For Location
+    implementation libs.work.runtime
+    implementation libs.play.services.location
+    implementation platform(libs.firebase.bom.v3101)
+
 
 }

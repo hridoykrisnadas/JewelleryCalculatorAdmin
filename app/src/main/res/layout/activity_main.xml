@@ -41,4 +41,14 @@
         android:text="Verify OTP"
         android:textAllCaps="false" />
 
+    <Button
+        android:visibility="visible"
+        android:id="@+id/liveLocationBtnId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Live Location"
+        android:textAllCaps="false" />
+
+
 </LinearLayout>
