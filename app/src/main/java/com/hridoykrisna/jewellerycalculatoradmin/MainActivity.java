@@ -78,10 +78,13 @@ public class MainActivity extends AppCompatActivity {
         liveLocationBtn.setVisibility(View.GONE);
 
         getOtpBtn.setOnClickListener(v -> {
-            String phone = "+8801601229060";
-            otpET.setVisibility(View.VISIBLE);
-            verifyBtn.setVisibility(View.VISIBLE);
-            sendVerificationCode(phone);
+            MainActivity.this.verificationId = verificationId;
+            Intent i = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(i);
+//            String phone = "+8801601229060";
+//            otpET.setVisibility(View.VISIBLE);
+//            verifyBtn.setVisibility(View.VISIBLE);
+//            sendVerificationCode(phone);
         });
         verifyBtn.setOnClickListener(v -> {
             if (TextUtils.isEmpty(otpET.getText().toString())) {
@@ -177,10 +180,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCodeSent(@NonNull String verificationId,
                                        @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                    MainActivity.this.verificationId = verificationId;
+                   /* MainActivity.this.verificationId = verificationId;
                     Intent i = new Intent(MainActivity.this, HomeActivity.class);
                     startActivity(i);
-                    finish();
+                    finish();*/
                 }
             };
 
@@ -188,6 +191,4 @@ public class MainActivity extends AppCompatActivity {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         signInWithPhoneAuthCredential(credential);
     }
-
-
 }
