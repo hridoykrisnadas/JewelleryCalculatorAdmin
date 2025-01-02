@@ -4,7 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +23,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.hridoykrisna.jewellerycalculatoradmin.notification.TokenManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,6 +40,8 @@ public class HomeActivity extends AppCompatActivity {
     private float silver_gram_21;
     private float silver_gram_18;
     private float silver_gram_sonaton;
+    private CheckBox isNotificationCB;
+    private boolean isNotification;
 
     private EditText gold22ET, gold21Et, gold18Et, goldSonatonEt, silver22ET, silver21Et, silver18Et, silverSonatonEt;
 
@@ -109,12 +117,23 @@ public class HomeActivity extends AppCompatActivity {
         updateBtnId = findViewById(R.id.updatePriceBtnId);
         updateDateTv = findViewById(R.id.updateDateTVId);
         runningDateTv = findViewById(R.id.runningDateTvid);
+        isNotificationCB = findViewById(R.id.isNotificationCBId);
 
         updateDateTv.setOnClickListener(v -> {
             selectUpdatDate(HomeActivity.this);
         });
         runningDateTv.setOnClickListener(v -> {
             selectRunningDate(HomeActivity.this);
+        });
+
+        sendNotification();
+
+        isNotificationCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                isNotification = true;
+            } else {
+                isNotification = false;
+            }
         });
 
         mDatabase.child("live_price").addValueEventListener(new ValueEventListener() {
@@ -194,10 +213,34 @@ public class HomeActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         Toast.makeText(HomeActivity.this, "Price Update Successful", Toast.LENGTH_SHORT).show();
+
+                        if (isNotification){
+                            sendNotification();
+                        }
                     }
                 }
             });
 
         });
+    }
+
+    private void sendNotification() {
+        String[] accessToken = new String[1];
+
+        TokenManager.getAccessToken(this, new TokenManager.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                // Use the token here (on the main thread)
+                accessToken[0] = token;
+                Log.d("AccessToken", "Token: " + accessToken[0]);
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("AccessToken", "Error generating token: " + e.getMessage());
+            }
+        });
+
     }
 }

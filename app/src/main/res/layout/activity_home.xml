@@ -205,6 +205,16 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
+            <CheckBox
+                android:id="@+id/isNotificationCBId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send Notification"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                android:fontFamily="@font/ubuntu_bold"
+                android:textColor="#BC1307"/>
+
             <Button
                 android:id="@+id/updatePriceBtnId"
                 android:layout_width="wrap_content"
