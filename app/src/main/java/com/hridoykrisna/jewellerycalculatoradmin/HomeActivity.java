@@ -23,8 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
+
 import com.hridoykrisna.jewellerycalculatoradmin.notification.TokenManager;
 
 import java.text.SimpleDateFormat;
@@ -234,6 +233,21 @@ public class HomeActivity extends AppCompatActivity {
                 accessToken[0] = token;
                 Log.d("AccessToken", "Token: " + accessToken[0]);
 
+//                DB.apiService_NT.sendNotification("Bearer " + accessToken[0], rootMap).enqueue(new Callback<>() {
+//                    @Override
+//                    public void onResponse(@NonNull Call<PushNotification> call, @NonNull Response<PushNotification> response) {
+//                        if (response.isSuccessful()) {
+//                            Log.d("Send Notification", "Send Notification: " + response.message());
+//                        } else {
+//                            Log.d("Send Notification unsuccessful", "Send Notification unsuccessful: " + response.message() + " Token: " + accessToken[0]);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(@NonNull Call<PushNotification> call, @NonNull Throwable t) {
+//                        Log.d("Send Notification failed", "Send Notification unsuccessful: " + t.getMessage());
+//                    }
+//                });
             }
 
             @Override
