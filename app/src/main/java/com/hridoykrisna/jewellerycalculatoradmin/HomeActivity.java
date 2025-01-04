@@ -131,9 +131,7 @@ public class HomeActivity extends AppCompatActivity {
         runningDateTv.setOnClickListener(v -> {
             selectRunningDate(HomeActivity.this);
         });
-
-        sendNotification();
-
+        
         isNotificationCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
                 isNotification = true;
@@ -265,6 +263,7 @@ public class HomeActivity extends AppCompatActivity {
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("title", title);
         dataMap.put("message", body);
+        dataMap.put("from", "Notification");
 
         // Message map
         HashMap<String, Object> messageMap = new HashMap<>();
@@ -278,18 +277,6 @@ public class HomeActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String jsonPayload = gson.toJson(rootMap);
 
-
-//        String jsonPayload = "{"
-//                + "to: /topics/notification,"
-//                + "notification: {"
-//                + "title: " + title + ","
-//                + "body: " + body
-//                + "},"
-//                + "data: {"
-//                + "extraKey: extraValue"
-//                + "}"
-//                + "}";
-//
         RequestBody bodyRequest = RequestBody.create(
                 jsonPayload,
                 MediaType.get("application/json; charset=utf-8")
