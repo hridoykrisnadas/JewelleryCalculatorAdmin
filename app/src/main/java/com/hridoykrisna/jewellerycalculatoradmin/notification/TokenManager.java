@@ -14,7 +14,7 @@ public class TokenManager {
 
     // Define a callback interface to return the token asynchronously
     public interface TokenCallback {
-        void onTokenReceived(String token);
+        void onTokenReceived(String token) throws Exception;
         void onError(Exception e);
     }
 
@@ -53,7 +53,11 @@ public class TokenManager {
             if (exception != null) {
                 callback.onError(exception);
             } else {
-                callback.onTokenReceived(token);
+                try {
+                    callback.onTokenReceived(token);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

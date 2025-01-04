@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,17 +17,27 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.google.gson.Gson;
 import com.hridoykrisna.jewellerycalculatoradmin.notification.TokenManager;
 
+import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class HomeActivity extends AppCompatActivity {
     private float gold_gram_22;
@@ -228,26 +237,12 @@ public class HomeActivity extends AppCompatActivity {
 
         TokenManager.getAccessToken(this, new TokenManager.TokenCallback() {
             @Override
-            public void onTokenReceived(String token) {
+            public void onTokenReceived(String token) throws Exception {
                 // Use the token here (on the main thread)
                 accessToken[0] = token;
                 Log.d("AccessToken", "Token: " + accessToken[0]);
 
-//                DB.apiService_NT.sendNotification("Bearer " + accessToken[0], rootMap).enqueue(new Callback<>() {
-//                    @Override
-//                    public void onResponse(@NonNull Call<PushNotification> call, @NonNull Response<PushNotification> response) {
-//                        if (response.isSuccessful()) {
-//                            Log.d("Send Notification", "Send Notification: " + response.message());
-//                        } else {
-//                            Log.d("Send Notification unsuccessful", "Send Notification unsuccessful: " + response.message() + " Token: " + accessToken[0]);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NonNull Call<PushNotification> call, @NonNull Throwable t) {
-//                        Log.d("Send Notification failed", "Send Notification unsuccessful: " + t.getMessage());
-//                    }
-//                });
+                notificationByClient(accessToken[0]);
             }
 
             @Override
@@ -256,5 +251,69 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    private void notificationByClient(String serverKey) throws Exception {
+
+        String fcmUrl = "https://fcm.googleapis.com/v1/projects/jewellery-calculator-27c66/messages:send";
+
+        OkHttpClient client = new OkHttpClient();
+
+        String title = "সোনার আপডেট মূল্য:";
+        String body = runningDate + " থেকে ২২ ক্যারেট সোনার নতুন দাম: "+ Math.round(gold_gram_22 * 11.664);
+
+        // Inner data map
+        HashMap<String, String> dataMap = new HashMap<>();
+        dataMap.put("title", title);
+        dataMap.put("message", body);
+
+        // Message map
+        HashMap<String, Object> messageMap = new HashMap<>();
+        messageMap.put("topic", "notification");
+        messageMap.put("data", dataMap); // Nested map
+
+        // Outer map
+        HashMap<String, Object> rootMap = new HashMap<>();
+        rootMap.put("message", messageMap);
+
+        Gson gson = new Gson();
+        String jsonPayload = gson.toJson(rootMap);
+
+
+//        String jsonPayload = "{"
+//                + "to: /topics/notification,"
+//                + "notification: {"
+//                + "title: " + title + ","
+//                + "body: " + body
+//                + "},"
+//                + "data: {"
+//                + "extraKey: extraValue"
+//                + "}"
+//                + "}";
+//
+        RequestBody bodyRequest = RequestBody.create(
+                jsonPayload,
+                MediaType.get("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(fcmUrl)
+                .post(bodyRequest)
+                .addHeader("Authorization", "Bearer " + serverKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        new Thread(() -> {
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    System.out.println("Message sent successfully: " + response.body().string());
+                } else {
+                    System.out.println("Failed to send message: " + response.body().string());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }

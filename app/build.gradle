@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     id 'com.google.gms.google-services'
+
+
 }
 
 android {
@@ -42,6 +44,7 @@ android {
         exclude 'META-INF/NOTICE.txt'
     }
 
+
 }
 
 dependencies {
@@ -57,12 +60,17 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
     implementation libs.firebase.analytics
+
     implementation 'com.google.firebase:firebase-database:20.0.5'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.15.0'
-    implementation 'com.google.firebase:firebase-auth:23.0.0'
+    implementation 'com.google.code.gson:gson'
+
 
 
     implementation libs.firebase.messaging
+
 
 //    For Location
     implementation libs.work.runtime
