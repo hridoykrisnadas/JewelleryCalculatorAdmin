@@ -17,17 +17,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import com.google.gson.Gson;
 import com.hridoykrisna.jewellerycalculatoradmin.notification.TokenManager;
 
-import java.io.FileInputStream;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -260,8 +258,8 @@ public class HomeActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        String title = "সোনার আপডেট মূল্য:";
-        String body = runningDate + " থেকে ২২ ক্যারেট সোনার নতুন দাম: "+ Math.round(gold_gram_22 * 11.664);
+        String title = "সোনার নতুন মূল্য নির্ধারিত";
+        String body = runningDate + " থেকে ২২ ক্যারেট সোনার নতুন দাম: " + NumberFormat.getInstance().format(Math.round(gold_gram_22 * 11.664)) + " টাকা মাত্র";
 
         // Inner data map
         HashMap<String, String> dataMap = new HashMap<>();
