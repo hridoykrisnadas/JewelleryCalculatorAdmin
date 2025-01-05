@@ -263,7 +263,6 @@ public class HomeActivity extends AppCompatActivity {
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("title", title);
         dataMap.put("message", body);
-        dataMap.put("from", "Notification");
 
         // Message map
         HashMap<String, Object> messageMap = new HashMap<>();
