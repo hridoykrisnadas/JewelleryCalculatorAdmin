@@ -41,7 +41,7 @@ public class DailyUpdateWorker extends Worker {
     public Result doWork() {
         try {
 
-            livePrice = new LivePrice();WebScraper.runTask();
+            livePrice = WebScraper.runTask();
 
             // Step 2: Check current Firebase value
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
