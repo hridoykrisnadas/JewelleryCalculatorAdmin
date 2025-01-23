@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,13 +25,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.hridoykrisna.jewellerycalculatoradmin.Scrap.DailyUpdateWorker;
+import com.hridoykrisna.jewellerycalculatoradmin.Scrap.WebScraper;
 import com.hridoykrisna.jewellerycalculatoradmin.notification.TokenManager;
+
+import org.apache.commons.logging.LogFactory;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -38,6 +46,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HomeActivity extends AppCompatActivity {
+    private static final org.apache.commons.logging.Log log = LogFactory.getLog(HomeActivity.class);
     private float gold_gram_22;
     private float gold_gram_21;
     private float gold_gram_18;
@@ -131,7 +140,22 @@ public class HomeActivity extends AppCompatActivity {
         runningDateTv.setOnClickListener(v -> {
             selectRunningDate(HomeActivity.this);
         });
-        
+
+        // Schedule the worker to run daily at 12:01 am
+        PeriodicWorkRequest dailyWorkRequest = new PeriodicWorkRequest.Builder(
+                DailyUpdateWorker.class, 1, TimeUnit.DAYS)
+                .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
+                .build();
+
+        WorkManager.getInstance(this).enqueue(dailyWorkRequest);
+
+//        try {
+//            getDataFromBajusWebsite();
+//        } catch (Exception e) {
+//            Log.d("WebScrapData", "WebScrapData: Runtime Exception");
+//            throw new RuntimeException(e);
+//        }
+
         isNotificationCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
                 isNotification = true;
@@ -228,6 +252,19 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private long calculateInitialDelay() {
+        // Calculate the delay until 12:01 am
+        long currentTime = System.currentTimeMillis();
+        long targetTime = new Date().getTime(); // Set to 12:01 am in your timezone
+        return targetTime > currentTime ? targetTime - currentTime : targetTime + 86400000 - currentTime;
+    }
+
+    private void getDataFromBajusWebsite() throws Exception {
+         WebScraper.runTask();
+//        String webScrapData = WebScraper.scrapeData();
+//        Log.d("WebScrapData", "WebScrapData: "+webScrapData.toString());
+    }
+
     private void sendNotification() {
         String[] accessToken = new String[1];
 
@@ -256,8 +293,9 @@ public class HomeActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        String title = "সোনার নতুন মূল্য নির্ধারিত";
-        String body = runningDate + " থেকে ২২ ক্যারেট সোনার নতুন দাম: " + NumberFormat.getInstance().format(Math.round(gold_gram_22 * 11.664)) + " টাকা মাত্র";
+
+        String title = "বাজুস নির্ধারিত স্বর্ণের নতুন মূল্য নির্ধারিত";
+        String body = runningDate + " তারিখ থেকে ২২ ক্যারেট স্বর্ণের নতুন দাম: " + NumberFormat.getInstance().format(Math.round(gold_gram_22 * 11.664)) + " টাকা মাত্র।";
 
         // Inner data map
         HashMap<String, String> dataMap = new HashMap<>();
