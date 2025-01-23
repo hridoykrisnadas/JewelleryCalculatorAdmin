@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Configuration;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -60,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private EditText gold22ET, gold21Et, gold18Et, goldSonatonEt, silver22ET, silver21Et, silver18Et, silverSonatonEt;
 
-    private Button updateBtnId;
+    private Button updateBtnId, autoUpdateBtn;
     private TextView updateDateTv, runningDateTv;
     private String updateDate, runningDate, updateAt;
 
@@ -94,8 +96,6 @@ public class HomeActivity extends AppCompatActivity {
             calendar.set(year, month, dayOfMonth);
             runningDate = simpleDateFormat.format(calendar.getTime());
             runningDateTv.setText(runningDate);
-
-
 
         }
     };
@@ -133,6 +133,7 @@ public class HomeActivity extends AppCompatActivity {
         updateDateTv = findViewById(R.id.updateDateTVId);
         runningDateTv = findViewById(R.id.runningDateTvid);
         isNotificationCB = findViewById(R.id.isNotificationCBId);
+        autoUpdateBtn = findViewById(R.id.autoUpdateBtnId);
 
         updateDateTv.setOnClickListener(v -> {
             selectUpdatDate(HomeActivity.this);
@@ -149,12 +150,19 @@ public class HomeActivity extends AppCompatActivity {
 
         WorkManager.getInstance(this).enqueue(dailyWorkRequest);
 
-//        try {
-//            getDataFromBajusWebsite();
-//        } catch (Exception e) {
-//            Log.d("WebScrapData", "WebScrapData: Runtime Exception");
-//            throw new RuntimeException(e);
-//        }
+        //Use auto updater when click a button
+        autoUpdateBtn.setOnClickListener(v->{
+            // Create a one-time work request for immediate execution
+            OneTimeWorkRequest immediateWorkRequest = new OneTimeWorkRequest.Builder(DailyUpdateWorker.class)
+                    .build();
+
+            // Enqueue the one-time work request
+            WorkManager.getInstance(this).enqueue(immediateWorkRequest);
+
+            // Provide feedback to the user
+            Toast.makeText(this, "Auto update triggered!", Toast.LENGTH_SHORT).show();
+        });
+
 
         isNotificationCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
@@ -234,7 +242,7 @@ public class HomeActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, hh:mm aa, dd:MM:yyyy");
             updateAt = simpleDateFormat.format(System.currentTimeMillis());
 
-            LivePrice livePrice = new LivePrice(updateDate, runningDate, gold_gram_22, gold_gram_21, gold_gram_18, gold_gram_sonaton, silver_gram_22, silver_gram_21, silver_gram_18, silver_gram_sonaton, updateAt);
+            LivePrice livePrice = new LivePrice(updateDate, runningDate, gold_gram_22, gold_gram_21, gold_gram_18, gold_gram_sonaton, silver_gram_22, silver_gram_21, silver_gram_18, silver_gram_sonaton, updateAt, "Hridoy Krisna Das");
 
             mDatabase.child("live_price").setValue(livePrice).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -261,8 +269,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void getDataFromBajusWebsite() throws Exception {
          WebScraper.runTask();
-//        String webScrapData = WebScraper.scrapeData();
-//        Log.d("WebScrapData", "WebScrapData: "+webScrapData.toString());
+
     }
 
     private void sendNotification() {

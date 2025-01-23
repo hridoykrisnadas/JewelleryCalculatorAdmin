@@ -67,15 +67,20 @@ public class DailyUpdateWorker extends Worker {
 
                             livePrice.setUpdate_date(yesterdayDate);
                             livePrice.setRunning_date(todayDate);
+                            livePrice.setUpdate_by("Automatic App Update Worker");
+
                             mDatabase.child("live_price").setValue(livePrice).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     sendNotification(todayDate);
                                 }
                             });
-                        }{
+                        } else {
                             Log.d("Worker Update Price", "Price are same: "+currentLivePrice.getGold_gram_22());
                         }
+                    }
+                     else {
+                         Log.d("Worker Update Price", "Price are same: " + currentLivePrice.getGold_gram_22());
                     }
 
                 }

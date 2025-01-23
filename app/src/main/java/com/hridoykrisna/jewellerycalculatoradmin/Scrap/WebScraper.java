@@ -33,7 +33,7 @@ public class WebScraper {
             try {
                 String url = "https://www.bajus.org/gold-price";
                 Document doc = Jsoup.connect(url).get();
-                System.out.println(doc.html()); // Print the entire HTML to check if it's loaded
+//                System.out.println(doc.html()); // Print the entire HTML to check if it's loaded
 
                 // Extract the gold table
                 Element goldTable = doc.selectFirst("table.gold-table");

@@ -12,11 +12,12 @@ public class LivePrice {
     private float silver_gram_18;
     private float silver_gram_sonaton;
     private String update_at;
+    private String update_by;
 
     public LivePrice() {
     }
 
-    public LivePrice(String update_date, String running_date, float gold_gram_22, float gold_gram_21, float gold_gram_18, float gold_gram_sonaton, float silver_gram_22, float silver_gram_21, float silver_gram_18, float silver_gram_sonaton, String update_at) {
+    public LivePrice(String update_date, String running_date, float gold_gram_22, float gold_gram_21, float gold_gram_18, float gold_gram_sonaton, float silver_gram_22, float silver_gram_21, float silver_gram_18, float silver_gram_sonaton, String update_at, String update_by) {
         this.update_date = update_date;
         this.running_date = running_date;
         this.gold_gram_22 = gold_gram_22;
@@ -28,6 +29,7 @@ public class LivePrice {
         this.silver_gram_18 = silver_gram_18;
         this.silver_gram_sonaton = silver_gram_sonaton;
         this.update_at = update_at;
+        this.update_by = update_by;
     }
 
     public String getUpdate_date() {
@@ -116,5 +118,31 @@ public class LivePrice {
 
     public void setUpdate_at(String update_at) {
         this.update_at = update_at;
+    }
+
+    public String getUpdate_by() {
+        return update_by;
+    }
+
+    public void setUpdate_by(String update_by) {
+        this.update_by = update_by;
+    }
+
+    @Override
+    public String toString() {
+        return "LivePrice{" +
+                "update_date='" + update_date + '\'' +
+                ", running_date='" + running_date + '\'' +
+                ", gold_gram_22=" + gold_gram_22 +
+                ", gold_gram_21=" + gold_gram_21 +
+                ", gold_gram_18=" + gold_gram_18 +
+                ", gold_gram_sonaton=" + gold_gram_sonaton +
+                ", silver_gram_22=" + silver_gram_22 +
+                ", silver_gram_21=" + silver_gram_21 +
+                ", silver_gram_18=" + silver_gram_18 +
+                ", silver_gram_sonaton=" + silver_gram_sonaton +
+                ", update_at='" + update_at + '\'' +
+                ", update_by='" + update_by + '\'' +
+                '}';
     }
 }
