@@ -42,6 +42,7 @@ public class DailyUpdateWorker extends Worker {
         try {
 
             livePrice = WebScraper.runTask();
+            Log.d("Worker Update Price", "Price are same 1: "+livePrice.getGold_gram_22());
 
             // Step 2: Check current Firebase value
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -76,11 +77,11 @@ public class DailyUpdateWorker extends Worker {
                                 }
                             });
                         } else {
-                            Log.d("Worker Update Price", "Price are same: "+currentLivePrice.getGold_gram_22());
+                            Log.d("Worker Update Price", "Price are same 2: "+currentLivePrice.getGold_gram_22());
                         }
                     }
                      else {
-                         Log.d("Worker Update Price", "Price are same: " + currentLivePrice.getGold_gram_22());
+                         Log.d("Worker Update Price", "Price are same 3: " + currentLivePrice.getGold_gram_22());
                     }
 
                 }

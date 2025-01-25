@@ -58,15 +58,10 @@ public class WebScraper {
                 }
 
 
-                Element field = doc.select("css-selector-for-field").first();
-                String result = field != null ? field.text() : null;
+//                Element field = doc.select("css-selector-for-field").first();
+//                String result = field != null ? field.text() : null;
 
-                if (result != null) {
-                    Log.d("WebScrapData", "WebScrapData: "+result);
-                } else {
-                    Log.d("WebScrapData", "WebScrapData: "+result);
-
-                }
+                Log.d("WebScrapData", "WebScrapData: " + livePrice1.toString());
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("WebScrapData", "WebScrapData Catch: "+e.getMessage());
