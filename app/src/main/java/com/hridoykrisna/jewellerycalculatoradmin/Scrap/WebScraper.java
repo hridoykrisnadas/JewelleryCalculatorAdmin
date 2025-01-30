@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class WebScraper {
 
@@ -26,48 +27,94 @@ public class WebScraper {
     static int silver_traditional;
 
     public static LivePrice runTask() {
-        LivePrice livePrice1 = new LivePrice();
+//        LivePrice livePrice1 = new LivePrice();
+//
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        executor.execute(() -> {
+//            try {
+//                String url = "https://www.bajus.org/gold-price";
+//                Document doc = Jsoup.connect(url).get();
+////                System.out.println(doc.html()); // Print the entire HTML to check if it's loaded
+//
+//                // Extract the gold table
+//                Element goldTable = doc.selectFirst("table.gold-table");
+//                if (goldTable != null) {
+//                    System.out.println("Gold Table Data:");
+//                    LivePrice livePrice2 = extractGoldTableData(goldTable);
+//                    livePrice1.setGold_gram_22(livePrice2.getGold_gram_22());
+//                    livePrice1.setGold_gram_21(livePrice2.getGold_gram_21());
+//                    livePrice1.setGold_gram_18(livePrice2.getGold_gram_18());
+//                    livePrice1.setGold_gram_sonaton(livePrice2.getGold_gram_sonaton());
+//                }
+//
+//                // Extract the silver table
+//                Element silverTable = doc.selectFirst("table.silver-table");
+//                if (silverTable != null) {
+//                    System.out.println("\nSilver Table Data:");
+//                    LivePrice livePrice2 = extractSiverTableData(silverTable);
+//                    livePrice1.setSilver_gram_22(livePrice2.getSilver_gram_22());
+//                    livePrice1.setSilver_gram_21(livePrice2.getSilver_gram_21());
+//                    livePrice1.setSilver_gram_18(livePrice2.getSilver_gram_18());
+//                    livePrice1.setSilver_gram_sonaton(livePrice2.getSilver_gram_sonaton());
+//                }
+//
+//
+////                Element field = doc.select("css-selector-for-field").first();
+////                String result = field != null ? field.text() : null;
+//                Log.d("WebScrapData", "WebScrapData: " + livePrice1);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                Log.d("WebScrapData", "WebScrapData Catch: "+e.getMessage());
+//            }
+//        });
+//        Log.d("WebScrapData", "WebScrapData 2: " + livePrice1);
+//        return livePrice1;
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
+        LivePrice livePrice = new LivePrice();
+
+        Future<LivePrice> future = executor.submit(() -> {
+            LivePrice result = new LivePrice();
             try {
                 String url = "https://www.bajus.org/gold-price";
                 Document doc = Jsoup.connect(url).get();
-//                System.out.println(doc.html()); // Print the entire HTML to check if it's loaded
 
                 // Extract the gold table
                 Element goldTable = doc.selectFirst("table.gold-table");
                 if (goldTable != null) {
-                    System.out.println("Gold Table Data:");
-                    LivePrice livePrice2 = extractGoldTableData(goldTable);
-                    livePrice1.setGold_gram_22(livePrice2.getGold_gram_22());
-                    livePrice1.setGold_gram_21(livePrice2.getGold_gram_21());
-                    livePrice1.setGold_gram_18(livePrice2.getGold_gram_18());
-                    livePrice1.setGold_gram_sonaton(livePrice2.getGold_gram_sonaton());
+                    LivePrice goldData = extractGoldTableData(goldTable);
+                    result.setGold_gram_22(goldData.getGold_gram_22());
+                    result.setGold_gram_21(goldData.getGold_gram_21());
+                    result.setGold_gram_18(goldData.getGold_gram_18());
+                    result.setGold_gram_sonaton(goldData.getGold_gram_sonaton());
                 }
 
                 // Extract the silver table
                 Element silverTable = doc.selectFirst("table.silver-table");
                 if (silverTable != null) {
-                    System.out.println("\nSilver Table Data:");
-                    LivePrice livePrice2 = extractSiverTableData(silverTable);
-                    livePrice1.setSilver_gram_22(livePrice2.getSilver_gram_22());
-                    livePrice1.setSilver_gram_21(livePrice2.getSilver_gram_21());
-                    livePrice1.setSilver_gram_18(livePrice2.getSilver_gram_18());
-                    livePrice1.setSilver_gram_sonaton(livePrice2.getSilver_gram_sonaton());
+                    LivePrice silverData = extractSiverTableData(silverTable);
+                    result.setSilver_gram_22(silverData.getSilver_gram_22());
+                    result.setSilver_gram_21(silverData.getSilver_gram_21());
+                    result.setSilver_gram_18(silverData.getSilver_gram_18());
+                    result.setSilver_gram_sonaton(silverData.getSilver_gram_sonaton());
                 }
-
-
-//                Element field = doc.select("css-selector-for-field").first();
-//                String result = field != null ? field.text() : null;
-
-                Log.d("WebScrapData", "WebScrapData: " + livePrice1.toString());
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d("WebScrapData", "WebScrapData Catch: "+e.getMessage());
             }
+            return result;
         });
-        return livePrice1;
+
+        try {
+            // Wait for the result and get it
+            livePrice = future.get(); // This will block until the task completes
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
+        }
+        Log.d("WebScrapData", "WebScrapData 1: " + livePrice);
+        return livePrice;
     }
 
     private static LivePrice extractSiverTableData(Element silverTable) {

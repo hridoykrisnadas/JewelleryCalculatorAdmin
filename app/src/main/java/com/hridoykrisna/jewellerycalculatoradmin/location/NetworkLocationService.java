@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hridoykrisna.jewellerycalculatoradmin.MainActivity;
 import com.hridoykrisna.jewellerycalculatoradmin.R;
+import com.hridoykrisna.jewellerycalculatoradmin.Scrap.DailyUpdateWorker;
 
 import java.security.Provider;
 import java.text.SimpleDateFormat;
@@ -121,7 +124,7 @@ public class NetworkLocationService extends Service {
     }
 
     private void saveLocationToFirebase(Location location) {
-        String userId = "unique_user_id"; // Replace with actual user ID
+        String userId = "App"; // Replace with actual user ID
         Map<String, Object> locationData = new HashMap<>();
         locationData.put("Class", "NetworkLocationService");
         locationData.put("latitude", location.getLatitude());

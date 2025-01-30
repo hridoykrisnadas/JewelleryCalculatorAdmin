@@ -40,7 +40,6 @@ public class DailyUpdateWorker extends Worker {
     @Override
     public Result doWork() {
         try {
-
             livePrice = WebScraper.runTask();
             Log.d("Worker Update Price", "Price are same 1: "+livePrice.getGold_gram_22());
 
