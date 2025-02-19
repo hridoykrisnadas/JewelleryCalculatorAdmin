@@ -1,7 +1,10 @@
 package com.hridoykrisna.jewellerycalculatoradmin.Scrap;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -72,7 +75,8 @@ public class DailyUpdateWorker extends Worker {
                             mDatabase.child("live_price").setValue(livePrice).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    sendNotification(todayDate);
+//                                    sendNotification(todayDate);
+                                    Toast.makeText(getApplicationContext(), "Price are updated", LENGTH_SHORT).show();
                                 }
                             });
                         } else {
@@ -82,7 +86,6 @@ public class DailyUpdateWorker extends Worker {
                      else {
                          Log.d("Worker Update Price", "Price are same 3: " + currentLivePrice.getGold_gram_22());
                     }
-
                 }
 
                 @Override
@@ -90,7 +93,6 @@ public class DailyUpdateWorker extends Worker {
 
                 }
             });
-
 
             return Result.success();
         } catch (Exception e) {
