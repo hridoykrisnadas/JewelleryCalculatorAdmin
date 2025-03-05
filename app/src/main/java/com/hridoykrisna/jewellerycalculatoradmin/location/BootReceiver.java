@@ -24,13 +24,13 @@ public class BootReceiver extends BroadcastReceiver {
                 context.startService(serviceIntent);
             }
 
-            // Schedule the periodic work again
-            PeriodicWorkRequest dailyWorkRequest = new PeriodicWorkRequest.Builder(
-                    DailyUpdateWorker.class, 1, TimeUnit.DAYS)
-                    .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
-                    .build();
-
-            WorkManager.getInstance(context).enqueue(dailyWorkRequest);
+//            // Schedule the periodic work again
+//            PeriodicWorkRequest dailyWorkRequest = new PeriodicWorkRequest.Builder(
+//                    DailyUpdateWorker.class, 1, TimeUnit.DAYS)
+//                    .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
+//                    .build();
+//
+//            WorkManager.getInstance(context).enqueue(dailyWorkRequest);
         }
     }
 
